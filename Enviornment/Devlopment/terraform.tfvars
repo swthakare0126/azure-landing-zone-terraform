@@ -4,6 +4,10 @@ resource_group = {
     name     = "fibre"
     location = "centralindia"
   }
+   rg2 = {
+    name     = "line"
+    location = "centralindia"
+  }
 }
 virtual_network = {
   vnet1 = {
