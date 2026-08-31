@@ -8,6 +8,15 @@ resource_group = {
     name     = "line"
     location = "centralindia"
   }
+   rg3 = {
+    name     = "dark-line"
+    location = "centralindia"
+  }
+     rg4 = {
+    name     = "light-line"
+    location = "centralindia"
+  }
+
 }
 virtual_network = {
   vnet1 = {

@@ -1,0 +1,66 @@
+
+name: "Terraform Azure Dev Pipeline"
+
+on:
+  push:
+    branches:
+      - 'feature*'
+      - 'feature/**'
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  terraform:
+    name: "Terraform Workflow"
+    runs-on: ubuntu-latest
+
+    env:
+    
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+
+    defaults:
+      run:
+        working-directory: ./Env/Devlopment
+
+    steps:
+      # Step 1: Code repository se checkout karna hai
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Terraform install karna (wrapper disabled)
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+          terraform_wrapper: false
+
+      # Step 3: Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 4: Format check
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      # Step 5: Terraform Plan
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -detailed-exitcode=false
+
+      # Step 6: Terraform Apply (Sirf main branch par chalega)
+      - name: Terraform Apply
+        id: apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+
+      # Step 7: Terraform Destroy (Agar Apply FAIL hota hai tabhi chalega)
+      - name: Terraform Auto-Destroy on Failure
+        if: failure() && steps.apply.outcome == 'failure' && github.ref == 'refs/heads/main'
+        run: terraform destroy -auto-approve
