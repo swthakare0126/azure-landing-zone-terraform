@@ -27,7 +27,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./Enviornment/Devlopment
+        working-directory: ./Env/Devlopment
 
     steps:
       # Step 1: Code repository se checkout karna hai
