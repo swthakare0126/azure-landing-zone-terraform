@@ -1,10 +1,9 @@
-
 name: Terraform CI-CD
 
 on:
   push:
     branches:
-      - "main/**"
+      - "feature/**"
 
   pull_request:
     types:
@@ -20,13 +19,13 @@ permissions:
 jobs:
 
   # ==========================================================
-  # 1. main BRANCH
+  # 1. FEATURE BRANCH
   #    Terraform Plan + Automatic PR
   # ==========================================================
 
   terraform-plan:
     name: Terraform Plan
-    if: github.event_name == 'push' && startsWith(github.ref_name, 'main/')
+    if: github.event_name == 'push' && startsWith(github.ref_name, 'feature/')
     runs-on: ubuntu-latest
 
     steps:
@@ -93,7 +92,7 @@ jobs:
               --title "Terraform Change - ${{ github.ref_name }}" \
               --body "## Terraform Change
 
-          main branch: \`${{ github.ref_name }}\`
+          Feature branch: \`${{ github.ref_name }}\`
 
           Terraform checks completed successfully:
 
